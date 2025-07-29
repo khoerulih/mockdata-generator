@@ -120,7 +120,12 @@ func readInput(path string, mapping *map[string]string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Printf("error saat menutup file: %s", err)
+		}
+	}()
 
 	fileByte, err := io.ReadAll(file)
 	if err != nil {
@@ -168,7 +173,11 @@ func writeOutput(path string, result map[string]any) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Printf("error saat menutup file: %s", err)
+		}
+	}()
 
 	resultByte, err := json.MarshalIndent(result, "", "  ")
 	if err != nil {
