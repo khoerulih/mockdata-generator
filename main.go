@@ -49,7 +49,10 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Println(mapping)
+	if err := validateType(mapping); err != nil {
+		fmt.Printf("gagal memvalidasi tipe data: %s \n", err)
+		os.Exit(0)
+	}
 }
 
 func printUsage() {
@@ -117,6 +120,23 @@ func readInput(path string, mapping *map[string]string) error {
 
 	if err := json.Unmarshal(fileByte, &mapping); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func validateType(mapping map[string]string) error {
+	supported := map[string]bool{
+		"name":    true,
+		"address": true,
+		"date":    true,
+		"phone":   true,
+	}
+
+	for _, value := range mapping {
+		if !supported[value] {
+			return errors.New("tipe data tidak didukung")
+		}
 	}
 
 	return nil
